@@ -14,110 +14,110 @@
 
 (function (window) {
 
-    'use strict';
-    
-    var CanvasPrototype 			= window.HTMLCanvasElement && window.HTMLCanvasElement.prototype,
+	'use strict';
+	
+	var CanvasPrototype 			= window.HTMLCanvasElement && window.HTMLCanvasElement.prototype,
 		hasBlobConstructor 			= window.Blob && (function () {
 
-		    try {
-		    
-		        return Boolean(new Blob());
-		        
-		    } catch (e) {
-		    
-		        return false;
-		        
-		    }
-		    
+			try {
+			
+				return Boolean(new Blob());
+				
+			} catch (e) {
+			
+				return false;
+				
+			}
+			
 		}()),
-        hasArrayBufferViewSupport 	= hasBlobConstructor && window.Uint8Array && ( function () {
+		hasArrayBufferViewSupport 	= hasBlobConstructor && window.Uint8Array && ( function () {
 
-            try {
+			try {
 
-                return new Blob([new Uint8Array(100)]).size === 100;
-                
-            } catch (e) {
+				return new Blob([new Uint8Array(100)]).size === 100;
+				
+			} catch (e) {
 
-                return false;
-                
-            }
-                
-        }()),
-        dataURLtoBlob 				=  function (data) {
-        
-            var mimeString 		= data.split(',')[0].split(':')[1].split(';')[0],
-            	byteString 		= atob(data.split(',')[1]),
-            	ab 				= new ArrayBuffer(byteString.length),
-            	ia 				= new Uint8Array(ab);
+				return false;
+				
+			}
+				
+		}()),
+		dataURLtoBlob 				=  function (data) {
+		
+			var mimeString 		= data.split(',')[0].split(':')[1].split(';')[0],
+				byteString 		= atob(data.split(',')[1]),
+				ab 				= new ArrayBuffer(byteString.length),
+				ia 				= new Uint8Array(ab);
 
-            for (var i = 0; i < byteString.length; i++) {
-            
-                ia[i] = byteString.charCodeAt(i);
-                
-            }
-            
-            // for legacy BlobBuilder support
-            var bb 	= (window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder);
-            
-            if (bb) {
-            
-                bb 	= new (window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder)();
-                bb.append(ab);
-                
-                return bb.getBlob(mimeString);
-                
-            } 
-            
-            else {
-            
-                bb 	= new Blob([hasArrayBufferViewSupport ? ia : ab], {
-                
-                    'type': (mimeString)
-                    
-                });
-                
-                return bb;
-                
-            }
-            
-    };
-    
-    if (window.HTMLCanvasElement && !CanvasPrototype.toBlob) {
-    
-        if (CanvasPrototype.mozGetAsFile) {
-        
-            CanvasPrototype.toBlob 	= function (callback, type) {
-            
-                callback(this.mozGetAsFile('blob', type));
-                
-            };
-            
-        } else if (CanvasPrototype.toDataURL && dataURLtoBlob) {
-        
-            CanvasPrototype.toBlob 	= function (callback, type) {
-            
-                callback(dataURLtoBlob(this.toDataURL(type)));
-                
-            };
-            
-        }
-        
-    }
-    
-    if (typeof define === 'function' && define.amd) {
-    
-        define(function () {
-        
-            return dataURLtoBlob;
-            
-        });
-        
-    } 
-    
-    else {
-    
-        window.dataURLtoBlob 	= dataURLtoBlob;
-        
-    }
-    
+			for (var i = 0; i < byteString.length; i++) {
+			
+				ia[i] = byteString.charCodeAt(i);
+				
+			}
+			
+			// for legacy BlobBuilder support
+			var bb 	= (window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder);
+			
+			if (bb) {
+			
+				bb 	= new (window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder)();
+				bb.append(ab);
+				
+				return bb.getBlob(mimeString);
+				
+			} 
+			
+			else {
+			
+				bb 	= new Blob([hasArrayBufferViewSupport ? ia : ab], {
+				
+					'type': (mimeString)
+					
+				});
+				
+				return bb;
+				
+			}
+			
+	};
+	
+	if (window.HTMLCanvasElement && !CanvasPrototype.toBlob) {
+	
+		if (CanvasPrototype.mozGetAsFile) {
+		
+			CanvasPrototype.toBlob 	= function (callback, type) {
+			
+				callback(this.mozGetAsFile('blob', type));
+				
+			};
+			
+		} else if (CanvasPrototype.toDataURL && dataURLtoBlob) {
+		
+			CanvasPrototype.toBlob 	= function (callback, type) {
+			
+				callback(dataURLtoBlob(this.toDataURL(type)));
+				
+			};
+			
+		}
+		
+	}
+	
+	if (typeof define === 'function' && define.amd) {
+	
+		define(function () {
+		
+			return dataURLtoBlob;
+			
+		});
+		
+	} 
+	
+	else {
+	
+		window.dataURLtoBlob 	= dataURLtoBlob;
+		
+	}
+	
 }(this));
